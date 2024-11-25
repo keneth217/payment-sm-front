@@ -37,7 +37,7 @@ export class CallbackComponent {
       console.log('Reference to verify:', this.reference);
 
       if (this.reference) {
-        this.verifyPaymentStatus(); // Call to check the payment status
+        this.verifyPaymentStatus(this.reference); // Call to check the payment status
       } else {
         this.paymentStatus = 'fail';  // If no reference, show failure
         this.isLoading = false; // Stop loading spinner
@@ -46,10 +46,10 @@ export class CallbackComponent {
   }
 
   // Method to verify the payment status
-  verifyPaymentStatus(): void {
+  verifyPaymentStatus(reference: string): void {
     this.isLoading = true;  // Start loading spinner
 
-    this.paymentService.checkPaymentStatus().subscribe({
+    this.paymentService.checkPaymentStatus(reference).subscribe({
       next: (response) => {
         console.log('Payment Status Response:', response);
 
