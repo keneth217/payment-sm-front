@@ -54,9 +54,9 @@ export class CallbackComponent {
 
         // Check if response status is true and payment status is 'success'
         if (response?.status && response.data?.status === 'success') {
-          const myStatus=response.data.status
+          const myStatus=response.data?.status
           console.log(myStatus)
-          this.paymentStatus = response.data.status
+          this.paymentStatus = response.data?.status
           this.paymentStatus = 'success';
           console.log("payments details..................."+this.paymentDetails)
           this.paymentDetails = {

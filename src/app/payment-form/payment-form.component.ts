@@ -42,12 +42,17 @@ export class PaymentFormComponent {
         next: (response: PaymentResponse) => {
           if (response.status) {
             this.toast.success(response.message + ": You are being redirected to payment page");
-
+console.log(response)
             // Redirect to Paystack payment page
-            window.location.href = response.data.authorization_url;
 
+localStorage.setItem('reference',response.data.reference)
             // Optionally, you can store some data here in case you need it after returning from Paystack
             sessionStorage.setItem('paymentReference', response.data.reference);
+
+// Redirect after a delay of two minutes (120,000 milliseconds)
+            setTimeout(() => {
+              window.location.href = response.data.authorization_url;
+            }, 120000); // 120,000 milliseconds = 2 minutes
           } else {
             this.toast.error('Payment initialization failed!');
           }
