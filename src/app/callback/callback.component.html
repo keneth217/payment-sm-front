@@ -1,11 +1,11 @@
 <div *ngIf="isLoading">Loading...</div>
 <div *ngIf="paymentStatus === 'success'">
   <p>Payment Status: {{ paymentStatus }}</p>
-  <p>Amount: {{ paymentDetails.amount }} {{ paymentDetails.currency }}</p>
-  <p>Payment Gateway Response: {{ paymentDetails.gatewayResponse }}</p>
-  <p>Paid At: {{ paymentDetails.paidAt }}</p>
-  <p>Card Type: {{ paymentDetails.cardType }}</p>
-  <p>Customer Email: {{ paymentDetails.customerEmail }}</p>
+  <p>Amount: {{ paymentDetails?.amount }} {{ paymentDetails?.currency }}</p>
+  <p>Payment Gateway Response: {{ paymentDetails?.gatewayResponse }}</p>
+  <p>Paid At: {{ paymentDetails?.paidAt }}</p>
+  <p>Card Type: {{ paymentDetails?.cardType }}</p>
+  <p>Customer Email: {{ paymentDetails?.customerEmail }}</p>
 </div>
 <div *ngIf="paymentStatus === 'fail'">
   <p>Payment failed or could not be verified.</p>
