@@ -32,33 +32,37 @@ export class PaymentFormComponent {
       amount: ['', [Validators.required, Validators.pattern('^[0-9]+(\\.[0-9]{1,2})?$')]]
     });
   }
-
   payNow() {
     if (this.payForm.valid) {
       const paymentData = this.payForm.value;
-      console.log(paymentData)
+      console.log(paymentData);
       this.isPaying = true;
 
-      this.service.payNow(this.payForm.value.email,this.payForm.value.amount).subscribe(
-        (response: PaymentResponse) => {
+      this.service.payNow(this.payForm.value.email, this.payForm.value.amount).subscribe({
+        next: (response: PaymentResponse) => {
           if (response.status) {
             this.toast.success(response.message + ": You are being redirected to payment page");
 
-            window.location.href = response.data.authorization_url; // Redirect to Paystack payment page//after payment is success i want to return to another page
+            // Redirect to Paystack payment page
+            window.location.href = response.data.authorization_url;
+
+            // Optionally, you can store some data here in case you need it after returning from Paystack
+            sessionStorage.setItem('paymentReference', response.data.reference);
           } else {
             this.toast.error('Payment initialization failed!');
           }
         },
-        (error) => {
+        error: (error) => {
           console.error('Error initializing payment:', error);
           this.toast.error(error.error?.errorMessage || 'Something went wrong!');
         },
-        () => {
+        complete: () => {
           this.isPaying = false;
         }
-      );
+      });
     } else {
       this.toast.warn('Please fill in all required fields!');
     }
   }
+
 }
