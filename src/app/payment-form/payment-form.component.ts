@@ -1,84 +1,80 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { PaymentService } from '../service/payment.service';
-import { CommonModule } from "@angular/common";
-
-interface PaymentDetails {
-  amount: number;
-  currency: string;
-  gatewayResponse: string;
-  paidAt: string;
-  cardType: string;
-  customerEmail: string;
-}
+import { AngularToastifyModule, ToastService } from "angular-toastify";
+import { NgIf } from "@angular/common";
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
+import { Router, RouterOutlet } from "@angular/router";
+import { PaymentResponse, PaymentService } from "../service/payment.service";
 
 @Component({
-  selector: 'app-callback',
-  templateUrl: './callback.component.html',
+  selector: 'app-payment-form',
   standalone: true,
-  imports: [CommonModule],
-  styleUrls: ['./callback.component.css']
+  imports: [
+    AngularToastifyModule,
+    NgIf,
+    ReactiveFormsModule,
+    RouterOutlet
+  ],
+  templateUrl: './payment-form.component.html',
+  styleUrls: ['./payment-form.component.css']
 })
-export class CallbackComponent {
-  reference: string = '';
-  isLoading: boolean = true;
-  paymentStatus: string | null = null;  // Will hold the payment status ('success' or 'fail')
-  paymentDetails: PaymentDetails | null = null;  // To store details about the payment (amount, status, etc.)
+export class PaymentFormComponent {
+  isPaying: boolean = false;
+  payForm!: FormGroup;
+  message:string=''
 
   constructor(
-    private route: ActivatedRoute,
-    private paymentService: PaymentService
-  ) {}
-
-  ngOnInit(): void {
-    // Get reference from URL
-    this.route.queryParams.subscribe(params => {
-      this.reference = params['reference'] || params['trxref'];
-      console.log('Reference to verify:', this.reference);
-
-      if (this.reference) {
-        this.verifyPaymentStatus(this.reference); // Correct method signature
-      } else {
-        // Handle missing reference, show error message
-        this.paymentStatus = 'fail';
-        this.isLoading = false;
-      }
+    private fb: FormBuilder,
+    private router: Router,
+    private service: PaymentService,
+    private toast: ToastService
+  ) {
+    // Initialize the payment form with validators
+    this.payForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      amount: ['', [Validators.required, Validators.pattern('^[0-9]+(\\.[0-9]{1,2})?$')]]
     });
   }
 
-  verifyPaymentStatus(reference: string): void {
-    this.isLoading = true;
-    this.paymentService.checkPaymentStatus(reference).subscribe({
-      next: (response) => {
-        console.log('Payment Status Response:', response);
+  // Method to initiate payment
+  payNow() {
+    if (this.payForm.valid) {
+      const paymentData = this.payForm.value;
+      console.log(paymentData);
 
-        // Check if response status is true and payment status is 'success'
-        if (response?.status && response.data?.status === 'success') {
-          this.paymentStatus = 'success';  // Explicitly set payment status to success
-          console.log('Payment details:', response.data);
+      this.isPaying = true; // Show loading spinner
+      this.message = ''; // Clear any previous message
+      // Call the service to initialize payment
+      this.service.payNow(paymentData.email, paymentData.amount).subscribe({
+        next: (response: PaymentResponse) => {
+          if (response.status) {
 
-          // Assign payment details if response structure is correct
-          this.paymentDetails = {
-            amount: response.data.amount,
-            currency: response.data.currency,
-            gatewayResponse: response.data.gateway_response,
-            paidAt: response.data.paid_at,
-            cardType: response.data.authorization?.card_type || 'N/A', // Safely access card_type
-            customerEmail: response.data.customer?.email || 'N/A' // Safely access customer email
-          };
-        } else {
-          this.paymentStatus = 'fail';
-          this.paymentDetails = null; // Clear payment details if not successful
+           this.message='wait for a few minutes to be directed to payment page'
+            this.toast.success(response.message + ": You are being redirected to the payment page");
+            console.log(response);
+
+            // Store the reference locally (sessionStorage is safer in this case for temporary storage)
+            localStorage.setItem('reference', response.data.reference);
+            sessionStorage.setItem('paymentReference', response.data.reference);
+
+            // Redirect after a delay of two minutes (120,000 milliseconds)
+            setTimeout(() => {
+              this.message=''
+              window.location.href = response.data.authorization_url;
+            }, 10000); // 120,000 milliseconds = 2 minutes
+          } else {
+            this.toast.error('Payment initialization failed!');
+          }
+        },
+        error: (error) => {
+          console.error('Error initializing payment:', error);
+          this.toast.error(error.error?.errorMessage || 'Something went wrong!');
+        },
+        complete: () => {
+          this.isPaying = false; // Hide loading spinner after completion
         }
-
-        this.isLoading = false;
-      },
-      error: (error) => {
-        console.error('Error during payment status check:', error);
-        this.paymentStatus = 'fail';
-        this.paymentDetails = null; // Clear payment details on error
-        this.isLoading = false;
-      },
-    });
+      });
+    } else {
+      this.toast.warn('Please fill in all required fields!');
+    }
   }
 }

@@ -34,7 +34,7 @@ export class CallbackComponent {
     // Get reference from URL
     this.route.queryParams.subscribe(params => {
       this.reference = params['reference'] || params['trxref'];
-      console.log(this.reference+ "reference to verify....................................");
+      console.log('Reference to verify:', this.reference);
 
       if (this.reference) {
         this.verifyPaymentStatus(this.reference); // Correct method signature
@@ -50,22 +50,21 @@ export class CallbackComponent {
     this.isLoading = true;
     this.paymentService.checkPaymentStatus(reference).subscribe({
       next: (response) => {
-        console.log(response);
+        console.log('Payment Status Response:', response);
 
         // Check if response status is true and payment status is 'success'
         if (response?.status && response.data?.status === 'success') {
-          const myStatus=response.data?.status
-          console.log(myStatus)
-          this.paymentStatus = response.data?.status
-          this.paymentStatus = 'success';
-          console.log("payments details..................."+this.paymentDetails)
+          this.paymentStatus = 'success';  // Explicitly set payment status to success
+          console.log('Payment details:', response.data);
+
+          // Assign payment details if response structure is correct
           this.paymentDetails = {
             amount: response.data.amount,
             currency: response.data.currency,
             gatewayResponse: response.data.gateway_response,
             paidAt: response.data.paid_at,
-            cardType: response.data.authorization.card_type,
-            customerEmail: response.data.customer.email
+            cardType: response.data.authorization?.card_type || 'N/A', // Safely access card_type
+            customerEmail: response.data.customer?.email || 'N/A' // Safely access customer email
           };
         } else {
           this.paymentStatus = 'fail';
