@@ -10,7 +10,7 @@ import { PaymentService } from '../service/payment.service';
 })
 export class CallbackComponent {
   reference: string | null = null;
-  loading: boolean = true;
+  isLoading: boolean = true;
 
   constructor(
     private route: ActivatedRoute,
@@ -33,19 +33,23 @@ export class CallbackComponent {
   }
 
   verifyPaymentStatus(reference: string): void {
+    this.isLoading = true
     this.paymentService.checkPaymentStatus(reference).subscribe({
       next: (response) => {
         console.log(response)
         // Ensure 'response' structure matches your backend
         if (response && response.status === 'success') {
           this.router.navigate(['/success']);
+          this.isLoading = false
         } else {
           this.router.navigate(['/fail']);
+          this.isLoading = false
         }
       },
       error: (error) => {
         console.error('Error during payment status check:', error);
         this.router.navigate(['/fail']);
+        this.isLoading = false
       },
     });
   }
