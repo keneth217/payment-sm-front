@@ -33,19 +33,21 @@ export class CallbackComponent {
   }
 
   verifyPaymentStatus(reference: string): void {
-    // Call the backend API to check the payment status using the reference
-    this.paymentService.checkPaymentStatus(reference).subscribe(
-      (response) => {
-        if (response.status === 'success') {  // Ensure the status matches your backend response
+    this.paymentService.checkPaymentStatus(reference).subscribe({
+      next: (response) => {
+        console.log(response)
+        // Ensure 'response' structure matches your backend
+        if (response && response.status === 'success') {
           this.router.navigate(['/success']);
         } else {
           this.router.navigate(['/fail']);
         }
       },
-      (error) => {
+      error: (error) => {
         console.error('Error during payment status check:', error);
         this.router.navigate(['/fail']);
-      }
-    );
+      },
+    });
   }
+
 }

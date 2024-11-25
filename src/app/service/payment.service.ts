@@ -32,14 +32,13 @@ export class PaymentService {
       })
     );
   }
-
-  // Method to check payment status based on the reference
   checkPaymentStatus(reference: string): Observable<any> {
-    return this.http.get(`${this.checkStatusUrl}/${reference}`).pipe(
+    return this.http.get<any>(`${this.checkStatusUrl}/${reference}`).pipe(
       catchError((error) => {
         console.error('Error checking payment status:', error);
-        return throwError(() => new Error(error.message || 'Server Error'));
+        return throwError(() => new Error(error.message || 'Failed to verify payment status'));
       })
     );
   }
+
 }
