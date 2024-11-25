@@ -34,6 +34,7 @@ export class CallbackComponent {
     // Get reference from URL
     this.route.queryParams.subscribe(params => {
       this.reference = params['reference'] || params['trxref'];
+      console.log('trxef to verify:', this.reference);
       console.log('Reference to verify:', this.reference);
 
       if (this.reference) {
