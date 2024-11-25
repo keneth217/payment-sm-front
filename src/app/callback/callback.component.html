@@ -1,1 +1,11 @@
-<p>callback works!</p>
+<!-- callback.component.html -->
+<div *ngIf="isLoading">Verifying payment...</div>
+
+<div *ngIf="!isLoading">
+  <div *ngIf="paymentStatus === 'success'" class="success-message">
+    Payment was successful!
+  </div>
+  <div *ngIf="paymentStatus === 'fail'" class="fail-message">
+    Payment failed. Please try again.
+  </div>
+</div>
