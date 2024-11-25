@@ -41,6 +41,7 @@ export class PaymentService {
 
     return this.http.get<any>(`${this.checkStatusUrl}/${reference}`, { headers }).pipe(
       map(response => {
+        console.log(response)
         // Assuming Paystack response contains a 'data' property for the transaction status
         if (response.status === 'success' && response.data) {
           return response.data;  // You can return the actual data from Paystack's response
