@@ -22,8 +22,8 @@ interface PaymentDetails {
 export class CallbackComponent {
   reference: string = '';
   isLoading: boolean = true;
-  paymentStatus: string | null = null;  // Will hold the payment status ('success' or 'fail')
-  paymentDetails: PaymentDetails | null = null;  // To store details about the payment (amount, status, etc.)
+  paymentStatus: string | null = null;
+  paymentDetails: PaymentDetails | null = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -31,94 +31,53 @@ export class CallbackComponent {
   ) {}
 
   ngOnInit(): void {
-    // Get reference from URL
+    // Get reference from URL query params
     this.route.queryParams.subscribe(params => {
       this.reference = params['reference'] || params['trxref'];
-      console.log('trxef to verify:', this.reference);
       console.log('Reference to verify:', this.reference);
 
       if (this.reference) {
-        this.isLoading=true
-        this.verifyPaymentStatus(this.reference); // Correct method signature
-        this.isLoading=false;
+        this.verifyPaymentStatus(this.reference); // Call to check the payment status
       } else {
-        // Handle missing reference, show error message
-        this.paymentStatus = 'fail';
-        this.isLoading = false;
+        this.paymentStatus = 'fail';  // If no reference, show failure
+        this.isLoading = false; // Stop loading spinner
       }
     });
   }
 
+  // Method to verify the payment status
   verifyPaymentStatus(reference: string): void {
-    this.isLoading = true;
+    this.isLoading = true;  // Start loading spinner
+
     this.paymentService.checkPaymentStatus(reference).subscribe({
       next: (response) => {
         console.log('Payment Status Response:', response);
 
-        // Check if response status is true and payment status is 'success'
         if (response?.status && response?.data?.status === 'success') {
-          this.paymentStatus = 'success';  // Explicitly set payment status to success
+          this.paymentStatus = 'success';  // Set success status
           console.log('Payment details:', response.data);
 
-          // Assign payment details from the response
+          // Assign payment details from response
           this.paymentDetails = {
-            amount: response.data.amount,  // Amount from response
-            currency: response.data.currency,  // Currency from response
-            gatewayResponse: response.data.gateway_response,  // Response message
-            paidAt: response.data.paid_at,  // Payment date and time
-            cardType: response.data.channel || 'N/A',  // Card type (or use channel as fallback)
-            customerEmail: response.data.email || 'N/A'  // Customer's email, add to response if needed
+            amount: response.data.amount,
+            currency: response.data.currency,
+            gatewayResponse: response.data.gateway_response,
+            paidAt: response.data.paid_at,
+            cardType: response.data.channel || 'N/A',
+            customerEmail: response.data.email || 'N/A'
           };
         } else {
-          this.paymentStatus = 'fail';
-          this.paymentDetails = null; // Clear payment details if not successful
+          this.paymentStatus = 'fail'; // In case of failure
+          this.paymentDetails = null; // Clear payment details if fail
         }
 
-        this.isLoading = false;
+        this.isLoading = false; // Stop loading spinner
       },
       error: (error) => {
         console.error('Error during payment status check:', error);
         this.paymentStatus = 'fail';
         this.paymentDetails = null; // Clear payment details on error
-        this.isLoading = false;
-      },
-    });
-  }
-
-  protected readonly CommonModule = CommonModule;
-
-  CheckStatus() {
-    this.isLoading = true;
-    this.paymentService.checkPaymentStatus(this.reference).subscribe({
-      next: (response) => {
-        console.log('Payment Status Response:', response);
-
-        // Check if response status is true and payment status is 'success'
-        if (response?.status && response?.data?.status === 'success') {
-          this.paymentStatus = 'success';  // Explicitly set payment status to success
-          console.log('Payment details:', response.data);
-
-          // Assign payment details from the response
-          this.paymentDetails = {
-            amount: response.data.amount,  // Amount from response
-            currency: response.data.currency,  // Currency from response
-            gatewayResponse: response.data.gateway_response,  // Response message
-            paidAt: response.data.paid_at,  // Payment date and time
-            cardType: response.data.channel || 'N/A',  // Card type (or use channel as fallback)
-            customerEmail: response.data.email || 'N/A'  // Customer's email, add to response if needed
-          };
-        } else {
-          this.paymentStatus = 'fail';
-          this.paymentDetails = null; // Clear payment details if not successful
-        }
-
-        this.isLoading = false;
-      },
-      error: (error) => {
-        console.error('Error during payment status check:', error);
-        this.paymentStatus = 'fail';
-        this.paymentDetails = null; // Clear payment details on error
-        this.isLoading = false;
+        this.isLoading = false; // Stop loading spinner
       },
     });
   }
