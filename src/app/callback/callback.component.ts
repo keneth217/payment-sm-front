@@ -38,7 +38,9 @@ export class CallbackComponent {
       console.log('Reference to verify:', this.reference);
 
       if (this.reference) {
+        this.isLoading=true
         this.verifyPaymentStatus(this.reference); // Correct method signature
+        this.isLoading=false;
       } else {
         // Handle missing reference, show error message
         this.paymentStatus = 'fail';
