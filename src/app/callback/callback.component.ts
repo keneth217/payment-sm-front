@@ -1,21 +1,23 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PaymentService } from '../service/payment.service';
+import {CommonModule} from "@angular/common";
 
 @Component({
   selector: 'app-callback',
   templateUrl: './callback.component.html',
   standalone: true,
+  imports:[CommonModule],
   styleUrls: ['./callback.component.css']
 })
 export class CallbackComponent {
   reference: string | null = null;
   isLoading: boolean = true;
+  paymentStatus: string | null = null;  // Will hold the payment status ('success' or 'fail')
 
   constructor(
     private route: ActivatedRoute,
-    private paymentService: PaymentService,
-    private router: Router
+    private paymentService: PaymentService
   ) {}
 
   ngOnInit(): void {
@@ -26,32 +28,31 @@ export class CallbackComponent {
       if (this.reference) {
         this.verifyPaymentStatus(this.reference);
       } else {
-        // Handle missing reference, could redirect to error page
-        this.router.navigate(['/fail']);
+        // Handle missing reference, show error message
+        this.paymentStatus = 'fail';
+        this.isLoading = false;
       }
     });
   }
 
   verifyPaymentStatus(reference: string): void {
-    this.isLoading = true
+    this.isLoading = true;
     this.paymentService.checkPaymentStatus(reference).subscribe({
       next: (response) => {
-        console.log(response)
+        console.log(response);
         // Ensure 'response' structure matches your backend
         if (response && response.status === 'success') {
-          this.router.navigate(['/success']);
-          this.isLoading = false
+          this.paymentStatus = 'success';
         } else {
-          this.router.navigate(['/fail']);
-          this.isLoading = false
+          this.paymentStatus = 'fail';
         }
+        this.isLoading = false;
       },
       error: (error) => {
         console.error('Error during payment status check:', error);
-        this.router.navigate(['/fail']);
-        this.isLoading = false
+        this.paymentStatus = 'fail';
+        this.isLoading = false;
       },
     });
   }
-
 }
