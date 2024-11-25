@@ -56,11 +56,10 @@ export class PaymentFormComponent {
             localStorage.setItem('reference', response.data.reference);
             sessionStorage.setItem('paymentReference', response.data.reference);
 
-            // Redirect after a delay of two minutes (120,000 milliseconds)
-            setTimeout(() => {
+
               this.message=''
               window.location.href = response.data.authorization_url;
-            }, 10000); // 120,000 milliseconds = 2 minutes
+
           } else {
             this.toast.error('Payment initialization failed!');
           }
