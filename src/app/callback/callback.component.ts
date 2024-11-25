@@ -53,7 +53,7 @@ export class CallbackComponent {
         console.log('Payment Status Response:', response);
 
         // Check if response status is true and payment status is 'success'
-        if (response?.status && response.data?.status === 'success') {
+        if (response?.status && response?.data?.status === 'success') {
           this.paymentStatus = 'success';  // Explicitly set payment status to success
           console.log('Payment details:', response.data);
 
