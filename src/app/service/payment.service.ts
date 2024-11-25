@@ -17,8 +17,8 @@ export interface PaymentResponse {
   providedIn: 'root'
 })
 export class PaymentService {
-  private initializeUrl = ' https://5e64-105-161-1-132.ngrok-free.app/api/paystack/initialize';  // For initializing payment
-  private checkStatusUrl = ' https://5e64-105-161-1-132.ngrok-free.app/api/paystack/verify-transaction';  // Correct endpoint for checking payment status
+  private initializeUrl = 'https://3624-105-161-1-132.ngrok-free.app/api/paystack/initialize';  // For initializing payment
+  private checkStatusUrl = 'https://3624-105-161-1-132.ngrok-free.app/api/paystack/verify-transaction';  // Correct endpoint for checking payment status
 
   constructor(private http: HttpClient) {}
 
