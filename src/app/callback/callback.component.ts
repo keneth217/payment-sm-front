@@ -20,7 +20,8 @@ interface PaymentDetails {
   styleUrls: ['./callback.component.css']
 })
 export class CallbackComponent {
-  reference: string = 'rh34gx9ged';
+  reference: string = '';
+  trxref: string = '';
   isLoading: boolean = true;
   paymentStatus: string | null = null;  // Will hold the payment status ('success' or 'fail')
   paymentDetails: PaymentDetails | null = null;  // To store details about the payment (amount, status, etc.)
@@ -33,8 +34,8 @@ export class CallbackComponent {
   ngOnInit(): void {
     // Get reference from URL
     this.route.queryParams.subscribe(params => {
-      // this.reference = params['reference'] || params['trxref'];
-      console.log('trxef to verify:', this.reference);
+      this.reference = params['reference'] || params['trxref'];
+      console.log('trxef to verify:', this.trxref);
       console.log('Reference to verify:', this.reference);
 
       if (this.reference) {
