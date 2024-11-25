@@ -34,12 +34,12 @@ export class PaymentService {
   }
 
 
-  checkPaymentStatus(reference: string): Observable<any> {
+  checkPaymentStatus(): Observable<any> {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json', // Set Content-Type header
     });
-
-    return this.http.get<any>(`${this.checkStatusUrl}/${reference}`, { headers }).pipe(
+const url="https://3624-105-161-1-132.ngrok-free.app/api/paystack/verify-transaction/3wwpx1z51u";
+    return this.http.get<any>(url, { headers }).pipe(
       map(response => {
         console.log(response)
         // Assuming Paystack response contains a 'data' property for the transaction status
