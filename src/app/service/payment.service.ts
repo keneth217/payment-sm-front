@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
@@ -32,15 +32,21 @@ export class PaymentService {
       })
     );
   }
-  checkPaymentStatus(reference: string): Observable<any> {
-    return this.http.get<any>(`${this.checkStatusUrl}/${reference}`).pipe(
-      catchError((error: any) => {
-        console.error('Error checking payment status:', error);  // Log full error object
-        const errorMessage = error?.error?.message || 'Failed to verify payment status';  // Check if error is available
-        return throwError(() => new Error(errorMessage));  // Return the error message for the component
-      })
-    );
-  }
+
+
+checkPaymentStatus(reference: string): Observable<any> {
+  const headers = new HttpHeaders({
+    'Content-Type': 'application/json', // Set Content-Type header
+  });
+  return this.http.get<any>(`${this.checkStatusUrl}/${reference}`, { headers }).pipe(
+    catchError((error: any) => {
+      console.error('Error checking payment status:', error);  // Log full error object
+      const errorMessage = error?.error?.message || 'Failed to verify payment status';  // Check if error is available
+      return throwError(() => new Error(errorMessage));  // Return the error message for the component
+    })
+  );
+}
+
 
 
 
