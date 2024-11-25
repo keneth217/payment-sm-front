@@ -34,11 +34,15 @@ export class PaymentService {
   }
   checkPaymentStatus(reference: string): Observable<any> {
     return this.http.get<any>(`${this.checkStatusUrl}/${reference}`).pipe(
-      catchError((error) => {
-        console.error('Error checking payment status...................:', error);
-        return throwError(() => new Error(error.message || 'Failed to verify payment status'));
+      catchError((error: any) => {
+        console.error('Error checking payment status:', error);  // Log full error object
+        const errorMessage = error?.error?.message || 'Failed to verify payment status';  // Check if error is available
+        return throwError(() => new Error(errorMessage));  // Return the error message for the component
       })
     );
   }
+
+
+
 
 }
