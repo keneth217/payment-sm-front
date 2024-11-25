@@ -33,7 +33,7 @@ export class CallbackComponent {
   ngOnInit(): void {
     // Get reference from URL
     this.route.queryParams.subscribe(params => {
-      this.reference = params['reference'];
+      this.reference = params['reference'] || params['trxref'];
       console.log(this.reference+ "reference to verify....................................");
 
       if (this.reference) {
