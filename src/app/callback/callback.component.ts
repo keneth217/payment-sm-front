@@ -45,7 +45,7 @@ export class CallbackComponent {
     });
   }
 
-  // Method to verify the payment status
+// Method to verify the payment status
   verifyPaymentStatus(reference: string): void {
     this.isLoading = true;  // Start loading spinner
 
@@ -53,19 +53,24 @@ export class CallbackComponent {
       next: (response) => {
         console.log('Payment Status Response:', response);
 
-        if (response?.status && response?.data?.status === 'success') {
+        // Handle both text and JSON responses
+        if (typeof response === 'string') {
+          // If the response is plain text, try to check for success in the text
+          if (response.includes('success')) {
+            this.paymentStatus = 'success';  // Set success status
+            console.log('Payment details:', response);
+
+          } else {
+            this.paymentStatus = 'fail'; // In case of failure in plain text
+            this.paymentDetails = null; // Clear payment details if fail
+          }
+        } else if (response) {
+          // If the response is JSON and has the 'success' status
           this.paymentStatus = 'success';  // Set success status
-          console.log('Payment details:', response.data);
+          console.log('Payment details:', response);
 
           // Assign payment details from response
-          this.paymentDetails = {
-            amount: response.data.amount,
-            currency: response.data.currency,
-            gatewayResponse: response.data.gateway_response,
-            paidAt: response.data.paid_at,
-            cardType: response.data.channel || 'N/A',
-            customerEmail: response.data.email || 'N/A'
-          };
+
         } else {
           this.paymentStatus = 'fail'; // In case of failure
           this.paymentDetails = null; // Clear payment details if fail
@@ -81,4 +86,5 @@ export class CallbackComponent {
       },
     });
   }
+
 }
