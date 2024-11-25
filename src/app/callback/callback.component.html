@@ -1,4 +1,10 @@
-<div *ngIf="isLoading">Loading...</div>
+<div *ngIf="isLoading">
+  Loading...
+<br>
+  <span class="loading loading-ball loading-xs"></span>
+  <span class="loading loading-ball loading-sm"></span>
+  <span class="loading loading-ball loading-md"></span>
+  <span class="loading loading-ball loading-lg"></span>
 <div *ngIf="!isLoading">
   <div *ngIf="paymentStatus === 'success'">
     <h3>Payment Success!</h3>
@@ -9,7 +15,9 @@
     <p><strong>Gateway Response:</strong> {{ paymentDetails?.gatewayResponse }}</p>
   </div>
   <div *ngIf="paymentStatus === 'fail'">
+    <button class="btn btn-secondary" (click)="CheckStatus()">Secondary</button>
     <h3>Payment Failed</h3>
     <p>Please check your payment details and try again.</p>
   </div>
+</div>
 </div>
