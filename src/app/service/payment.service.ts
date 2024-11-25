@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {map, Observable, throwError} from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 export interface PaymentResponse {
@@ -18,7 +18,7 @@ export interface PaymentResponse {
 })
 export class PaymentService {
   private initializeUrl = 'https://3624-105-161-1-132.ngrok-free.app/api/paystack/initialize';  // For initializing payment
-  private checkStatusUrl = 'https://3624-105-161-1-132.ngrok-free.app/api/paystack/verify-transaction';  // Correct endpoint for checking payment status
+  private checkStatusUrl = 'http://localhost:8080/api/paystack/verify-transaction';  // Correct endpoint for checking payment status
 
   constructor(private http: HttpClient) {}
 
@@ -34,30 +34,18 @@ export class PaymentService {
   }
 
 
-  checkPaymentStatus(): Observable<any> {
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json', // Set Content-Type header
-    });
-const url="https://3624-105-161-1-132.ngrok-free.app/api/paystack/verify-transaction/3wwpx1z51u";
-    return this.http.get<any>(url, { headers }).pipe(
-      map(response => {
-        console.log(response)
-        // Assuming Paystack response contains a 'data' property for the transaction status
-        if (response.status === 'success' && response.data) {
-          return response.data;  // You can return the actual data from Paystack's response
-        } else {
-          throw new Error('Payment verification failed');
-        }
-      }),
-      catchError((error: any) => {
-        console.error('Error checking payment status:', error);  // Log full error object
-        const errorMessage = error?.error?.message || 'Failed to verify payment status';  // Check if error is available
-        return throwError(() => new Error(errorMessage));  // Return the error message for the component
-      })
-    );
-  }
-
-
+checkPaymentStatus(reference: string): Observable<any> {
+  const headers = new HttpHeaders({
+    'Content-Type': 'application/json', // Set Content-Type header
+  });
+  return this.http.get<any>(`${this.checkStatusUrl}/${reference}`, { headers }).pipe(
+    catchError((error: any) => {
+      console.error('Error checking payment status:', error);  // Log full error object
+      const errorMessage = error?.error?.message || 'Failed to verify payment status';  // Check if error is available
+      return throwError(() => new Error(errorMessage));  // Return the error message for the component
+    })
+  );
+}
 
 
 
