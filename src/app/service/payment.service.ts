@@ -33,19 +33,35 @@ export class PaymentService {
     );
   }
 
+//
+// checkPaymentStatus(reference: string): Observable<any> {
+//   const headers = new HttpHeaders({
+//     'Content-Type': 'application/json', // Set Content-Type header
+//   });
+//   return this.http.get<any>(`${this.checkStatusUrl}/${reference}`, { headers }).pipe(
+//     catchError((error: any) => {
+//       console.error('Error checking payment status:', error);  // Log full error object
+//       const errorMessage = error?.error?.message || 'Failed to verify payment status';  // Check if error is available
+//       return throwError(() => new Error(errorMessage));  // Return the error message for the component
+//     })
+//   );
+// }
+  checkPaymentStatus(reference: string): Observable<string> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json', // Set Content-Type header
+    });
 
-checkPaymentStatus(reference: string): Observable<any> {
-  const headers = new HttpHeaders({
-    'Content-Type': 'application/json', // Set Content-Type header
-  });
-  return this.http.get<any>(`${this.checkStatusUrl}/${reference}`, { headers }).pipe(
-    catchError((error: any) => {
-      console.error('Error checking payment status:', error);  // Log full error object
-      const errorMessage = error?.error?.message || 'Failed to verify payment status';  // Check if error is available
-      return throwError(() => new Error(errorMessage));  // Return the error message for the component
-    })
-  );
-}
+    return this.http.get<string>(`${this.checkStatusUrl}/${reference}`, {
+      headers,
+      responseType: 'text' as 'json', // Set responseType to 'text'
+    }).pipe(
+      catchError((error: any) => {
+        console.error('Error checking payment status:', error);  // Log full error object
+        const errorMessage = error?.error?.message || 'Failed to verify payment status';  // Check if error is available
+        return throwError(() => new Error(errorMessage));  // Return the error message for the component
+      })
+    );
+  }
 
 
 
