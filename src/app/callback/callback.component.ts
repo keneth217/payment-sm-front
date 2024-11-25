@@ -57,14 +57,14 @@ export class CallbackComponent {
           this.paymentStatus = 'success';  // Explicitly set payment status to success
           console.log('Payment details:', response.data);
 
-          // Assign payment details if response structure is correct
+          // Assign payment details from the response
           this.paymentDetails = {
-            amount: response.data.amount,
-            currency: response.data.currency,
-            gatewayResponse: response.data.gateway_response,
-            paidAt: response.data.paid_at,
-            cardType: response.data.authorization?.card_type || 'N/A', // Safely access card_type
-            customerEmail: response.data.customer?.email || 'N/A' // Safely access customer email
+            amount: response.data.amount,  // Amount from response
+            currency: response.data.currency,  // Currency from response
+            gatewayResponse: response.data.gateway_response,  // Response message
+            paidAt: response.data.paid_at,  // Payment date and time
+            cardType: response.data.channel || 'N/A',  // Card type (or use channel as fallback)
+            customerEmail: response.data.email || 'N/A'  // Customer's email, add to response if needed
           };
         } else {
           this.paymentStatus = 'fail';
