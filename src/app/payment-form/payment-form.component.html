@@ -1,0 +1,51 @@
+<div class="hero bg-base-200 min-h-screen"><lib-toastify-toast-container></lib-toastify-toast-container>
+  Toast container options (optional)
+  <router-outlet></router-outlet>
+  <lib-toastify-toast-container
+    [position]="'top-right'"
+    [transition]="'zoom'"
+    [newestOnTop]="true"
+    [closeOnClick]="true"
+    [pauseOnHover]="true"
+    [pauseOnVisibilityChange]="true"
+    [iconLibrary]="'font-awesome'">
+  </lib-toastify-toast-container>
+
+  <div class="hero-content flex-col lg:flex-row-reverse">
+    <div class="text-center lg:text-left">
+      <h1 class="text-5xl font-bold">Pay Via PayStack</h1>
+      <p class="py-6">
+        Your convenient payment method
+      </p>
+    </div>
+    <div class="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
+      <form [formGroup]="payForm"  class="card-body" (ngSubmit)="payNow()">
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Email</span>
+          </label>
+          <input type="email" placeholder="Email" class="input input-bordered" required formControlName="email" />
+        </div>
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Amount</span>
+          </label>
+          <input type="text" placeholder="Amount" class="input input-bordered"  required formControlName="amount" />
+          <label class="label">
+
+          </label>
+        </div>
+        <div class="form-control mt-6">
+          <button
+            class="btn btn-accent bg-green-400 text-white flex items-center"
+            [disabled]="isPaying"
+            (click)="payNow()">
+            <span *ngIf="isPaying" class="spinner-border spinner-border-sm mr-2"></span>
+            {{ isPaying ? 'Redirect to payment' : 'Pay Now' }}
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
