@@ -27,7 +27,7 @@ export class CallbackComponent {
         this.verifyPaymentStatus(this.reference);
       } else {
         // Handle missing reference, could redirect to error page
-        this.router.navigate(['/payment-failed']);
+        this.router.navigate(['/fail']);
       }
     });
   }
@@ -39,12 +39,12 @@ export class CallbackComponent {
         if (response.status === 'success') {  // Ensure the status matches your backend response
           this.router.navigate(['/success']);
         } else {
-          this.router.navigate(['/payment-failed']);
+          this.router.navigate(['/fail']);
         }
       },
       (error) => {
         console.error('Error during payment status check:', error);
-        this.router.navigate(['/payment-failed']);
+        this.router.navigate(['/fail']);
       }
     );
   }
