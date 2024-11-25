@@ -1,0 +1,15 @@
+/* callback.component.css */
+.success-message {
+  color: green;
+  font-size: 18px;
+}
+
+.fail-message {
+  color: red;
+  font-size: 18px;
+}
+
+div {
+  text-align: center;
+  margin-top: 20px;
+}
